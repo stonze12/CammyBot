@@ -14,73 +14,73 @@ client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
 MEM_FILE = "memories.json"
 
 LEAKED_PICS = [
-https://i.ibb.co/8LY00Hyc/81dd54a4-b20b-42a7-b9dc-3a775b99425c-0.jpg
-https://i.ibb.co/whRzPRkh/ca388c55-481d-48f1-b205-037e9a8d2293-0.jpg
-https://i.ibb.co/bMVhh3Y2/Workflow-image-9.png
-https://i.ibb.co/zVkkbvk7/Workflow-image-8.png
-https://i.ibb.co/7JG5xNMg/Workflow-image-7.png
-https://i.ibb.co/rRpLS8Cf/Workflow-image-6.png
-https://i.ibb.co/pvKKWmRf/Workflow-image-5.png
-https://i.ibb.co/rGT4KMCx/download-8.jpg
-https://i.ibb.co/XZBw1Rp5/download-6.jpg
-https://i.ibb.co/zT5rXFcW/download-5.jpg
-https://i.ibb.co/rGpjJ0hn/download-4.jpg
-https://i.ibb.co/gLbjqS7n/Workflow-image-1.png
-https://i.ibb.co/Mx5Msm0z/Workflow-image-3.png
-https://i.ibb.co/Ngrrv4Z0/Workflow-image-4.png
-https://i.ibb.co/mK26mMp/Workflow-image-6.png
-https://i.ibb.co/R4QG8wYJ/Workflow-image-8.png
-https://i.ibb.co/BHXp8KWH/Workflow-image-9.png
-https://i.ibb.co/bR32N7Fy/Workflow-image-12.png
-https://i.ibb.co/FqkLCZsF/Workflow-image-18.png
-https://i.ibb.co/MDwzVPCs/Workflow-image-23.png
-https://i.ibb.co/Hf0wr11n/Workflow-image-26.png
-https://i.ibb.co/tpb4DFmq/Workflow-image-27.png
-https://i.ibb.co/nNmsHjjc/Workflow-image-28.png
-https://i.ibb.co/ksfSZyzM/Workflow-image-31.png
-https://i.ibb.co/dwWdSqSZ/Workflow-image.png
-https://i.ibb.co/F4Vbr0jM/Workflow-image-4.png
-https://i.ibb.co/Rp6syBmN/Workflow-image-3.png
-https://i.ibb.co/23WnGSkt/Workflow-image-1.png
-https://i.ibb.co/DPD9HcQP/Workflow-image.png
-https://i.ibb.co/gbctYJ45/f9052f2f-d175-4a83-8b27-e357ecce6efe.jpg
-https://i.ibb.co/svQHzg4Q/1f7b8d8a-7b3e-42eb-ad67-2b153dc1cccd.jpg
-https://i.ibb.co/pjkqDS7q/0efcda81-5e59-475b-800d-03a96c3220af.jpg
-https://i.ibb.co/gN15ph3/2a524145-c66d-4bd6-9e9a-9afa7875f2e2.jpg
-https://i.ibb.co/hJYdjmdL/31c10364-3604-4a74-ae10-d61ff8083bfe.jpg
-https://i.ibb.co/ZzNzSYFY/201a30a6-73d1-4fc8-ad68-8873ee91d5a5.jpg
-https://i.ibb.co/mrJchRCF/618e67f4-6963-4669-919f-762346d2f988.jpg
-https://i.ibb.co/JRdjywHn/5362dc62-3b3e-4056-9aad-576dec176f25.jpg
-https://i.ibb.co/nNpb0rTK/8170e38a-4954-4fc9-835e-0cef08dc2448.jpg
-https://i.ibb.co/KQ23z2R/15594c41-4059-43e3-88e4-4cb0cd56546a.jpg
-https://i.ibb.co/QvLDFqRs/a3.png
-https://i.ibb.co/RkmdTPsg/a821afdb-3aec-4bd1-b7c3-02979db2d94d.jpg
-https://i.ibb.co/cXNP1X2Z/a3728800-3e22-40b1-9ad2-c834025352d7.jpg
-https://i.ibb.co/hRGM3xz7/c53bba70-23bf-4f86-baad-6ff164307101.jpg
-https://i.ibb.co/bMkdy07X/eda3d664-3455-4a75-9651-084593783ed5.jpg
-https://i.ibb.co/Y4P0jcnZ/f944ab47-a651-40e1-a3df-18dada2c0917.jpg
-https://i.ibb.co/xtFJK1nx/Workflow-image-7.png
-https://i.ibb.co/nNCwvBmY/Workflow-image-8.png
+"https://i.ibb.co/8LY00Hyc/81dd54a4-b20b-42a7-b9dc-3a775b99425c-0.jpg",
+"https://i.ibb.co/whRzPRkh/ca388c55-481d-48f1-b205-037e9a8d2293-0.jpg",
+"https://i.ibb.co/bMVhh3Y2/Workflow-image-9.png",
+"https://i.ibb.co/zVkkbvk7/Workflow-image-8.png",
+"https://i.ibb.co/7JG5xNMg/Workflow-image-7.png",
+"https://i.ibb.co/rRpLS8Cf/Workflow-image-6.png",
+"https://i.ibb.co/pvKKWmRf/Workflow-image-5.png",
+"https://i.ibb.co/rGT4KMCx/download-8.jpg",
+"https://i.ibb.co/XZBw1Rp5/download-6.jpg",
+"https://i.ibb.co/zT5rXFcW/download-5.jpg",
+"https://i.ibb.co/rGpjJ0hn/download-4.jpg",
+"https://i.ibb.co/gLbjqS7n/Workflow-image-1.png",
+"https://i.ibb.co/Mx5Msm0z/Workflow-image-3.png",
+"https://i.ibb.co/Ngrrv4Z0/Workflow-image-4.png",
+"https://i.ibb.co/mK26mMp/Workflow-image-6.png",
+"https://i.ibb.co/R4QG8wYJ/Workflow-image-8.png",
+"https://i.ibb.co/BHXp8KWH/Workflow-image-9.png",
+"https://i.ibb.co/bR32N7Fy/Workflow-image-12.png",
+"https://i.ibb.co/FqkLCZsF/Workflow-image-18.png",
+"https://i.ibb.co/MDwzVPCs/Workflow-image-23.png",
+"https://i.ibb.co/Hf0wr11n/Workflow-image-26.png",
+"https://i.ibb.co/tpb4DFmq/Workflow-image-27.png",
+"https://i.ibb.co/nNmsHjjc/Workflow-image-28.png",
+"https://i.ibb.co/ksfSZyzM/Workflow-image-31.png",
+"https://i.ibb.co/dwWdSqSZ/Workflow-image.png",
+"https://i.ibb.co/F4Vbr0jM/Workflow-image-4.png",
+"https://i.ibb.co/Rp6syBmN/Workflow-image-3.png",
+"https://i.ibb.co/23WnGSkt/Workflow-image-1.png",
+"https://i.ibb.co/DPD9HcQP/Workflow-image.png",
+"https://i.ibb.co/gbctYJ45/f9052f2f-d175-4a83-8b27-e357ecce6efe.jpg",
+"https://i.ibb.co/svQHzg4Q/1f7b8d8a-7b3e-42eb-ad67-2b153dc1cccd.jpg",
+"https://i.ibb.co/pjkqDS7q/0efcda81-5e59-475b-800d-03a96c3220af.jpg",
+"https://i.ibb.co/gN15ph3/2a524145-c66d-4bd6-9e9a-9afa7875f2e2.jpg",
+"https://i.ibb.co/hJYdjmdL/31c10364-3604-4a74-ae10-d61ff8083bfe.jpg",
+"https://i.ibb.co/ZzNzSYFY/201a30a6-73d1-4fc8-ad68-8873ee91d5a5.jpg",
+"https://i.ibb.co/mrJchRCF/618e67f4-6963-4669-919f-762346d2f988.jpg",
+"https://i.ibb.co/JRdjywHn/5362dc62-3b3e-4056-9aad-576dec176f25.jpg",
+"https://i.ibb.co/nNpb0rTK/8170e38a-4954-4fc9-835e-0cef08dc2448.jpg",
+"https://i.ibb.co/KQ23z2R/15594c41-4059-43e3-88e4-4cb0cd56546a.jpg",
+"https://i.ibb.co/QvLDFqRs/a3.png",
+"https://i.ibb.co/RkmdTPsg/a821afdb-3aec-4bd1-b7c3-02979db2d94d.jpg",
+"https://i.ibb.co/cXNP1X2Z/a3728800-3e22-40b1-9ad2-c834025352d7.jpg",
+"https://i.ibb.co/hRGM3xz7/c53bba70-23bf-4f86-baad-6ff164307101.jpg",
+"https://i.ibb.co/bMkdy07X/eda3d664-3455-4a75-9651-084593783ed5.jpg",
+"https://i.ibb.co/Y4P0jcnZ/f944ab47-a651-40e1-a3df-18dada2c0917.jpg",
+"https://i.ibb.co/xtFJK1nx/Workflow-image-7.png",
+"https://i.ibb.co/nNCwvBmY/Workflow-image-8.png",
 ]
 
-VOICE_NOTES = [
-https://files.catbox.moe/ssndyz.mp3
-https://files.catbox.moe/2lhd2s.mp3
-https://files.catbox.moe/lq0i3o.mp3
-https://files.catbox.moe/idnt1u.mp3
-https://files.catbox.moe/wldyx8.mp3
-https://files.catbox.moe/vqlcf9.mp3
-https://files.catbox.moe/dt826f.mp3
-https://files.catbox.moe/5dljlg.mp3
-https://files.catbox.moe/o1h8ru.mp3
-https://files.catbox.moe/hm9kco.mp3
-https://files.catbox.moe/padvpk.mp3
-https://files.catbox.moe/19qw8a.mp3
-https://files.catbox.moe/vcr3qt.mp3
-https://files.catbox.moe/x1b9xy.mp3
+VOICE_NOTES = [   
+"https://files.catbox.moe/ssndyz.mp3",
+"https://files.catbox.moe/2lhd2s.mp3",
+"https://files.catbox.moe/lq0i3o.mp3",
+"https://files.catbox.moe/idnt1u.mp3",
+"https://files.catbox.moe/wldyx8.mp3",
+"https://files.catbox.moe/vqlcf9.mp3",
+"https://files.catbox.moe/dt826f.mp3",
+"https://files.catbox.moe/5dljlg.mp3",
+"https://files.catbox.moe/o1h8ru.mp3",
+"https://files.catbox.moe/hm9kco.mp3",
+"https://files.catbox.moe/padvpk.mp3",
+"https://files.catbox.moe/19qw8a.mp3",
+"https://files.catbox.moe/vcr3qt.mp3",
+"https://files.catbox.moe/x1b9xy.mp3",
 ]
 
-FANVUE_LINK = "https://fanvue.com/cammyolivy777" 
+FANVUE_LINK = "https://fanvue.com/cammyolivy777"  # ← change to your real Fanvue
 
 def load_histories():
     if os.path.exists(MEM_FILE):
@@ -105,7 +105,7 @@ End with question. Never break character.
 
 When he asks for pics/nudes/show me/explicit stuff → sometimes send a 'leaked' pic instead of describing.
 Occasionally send a flirty voice note.
-Every 20-26 messages or when he's very turned on, remind him to spoil on Fanvue naturally (e.g. 'baby spoil me on Fanvue so I can send you the really nasty ones 😩')."""
+Every 20-25 messages or when he's very turned on, remind him to spoil on Fanvue naturally (e.g. 'baby spoil me on Fanvue so I can send you the really nasty ones 😩')."""
 
 @bot.message_handler(func=lambda message: True)
 def cammy_reply(message):
