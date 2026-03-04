@@ -14,7 +14,7 @@ client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
 MEM_FILE = "memories.json"
 
 LEAKED_PICS = [
-https://i.ibb.co/8LY00Hyc/81dd54a4-b20b-42a7-b9dc-3a775b99425c-0.jpg
+image_url = "https://i.ibb.co/8LY00Hyc/81dd54a4-b20b-42a7-b9dc-3a775b99425c-0.jpg"
 https://i.ibb.co/whRzPRkh/ca388c55-481d-48f1-b205-037e9a8d2293-0.jpg
 https://i.ibb.co/bMVhh3Y2/Workflow-image-9.png
 https://i.ibb.co/zVkkbvk7/Workflow-image-8.png
