@@ -130,27 +130,29 @@ def cammy_reply(message):
 
     now = time.time()
 
+    # If conversation already ended (goodbye was said), IGNORE EVERYTHING silently
+    if conversation_ended.get(chat_id, False):
+        # No reply, no processing, no history append — just ghost until new session or restart
+        return
+
     # Goodbye detection
     is_goodbye = any(phrase in lower_text for phrase in GOODBYE_TRIGGERS)
     if is_goodbye:
-        if not conversation_ended.get(chat_id, False):
-            goodbye_reply = random.choice([
-                "Night handsome, dream of me 😘💕",
-                "Okay baby, talk soon… miss you already 😏",
-                "Sweet dreams daddy, text me tomorrow 💦",
-                "Bye cutie, can't wait to hear from you again ❤️"
-            ])
-            bot.reply_to(message, goodbye_reply)
-            conversation_ended[chat_id] = True
+        goodbye_reply = random.choice([
+            "Night handsome, dream of me 😘💕",
+            "Okay baby, talk soon… miss you already 😏",
+            "Sweet dreams daddy, text me when you wake up 💦",
+            "Bye cutie, can't wait to hear from you again ❤️"
+        ])
+        bot.reply_to(message, goodbye_reply)
+        conversation_ended[chat_id] = True
         last_active_time[chat_id] = now
-        return  # stop responding
+        return  # Immediate stop - no further code runs
 
-    # Reset ended flag if he messages after goodbye
-    conversation_ended[chat_id] = False
-
+    # Normal flow only if not ended
     # Random miss-you check-in (only if idle >30 min, low chance)
     if chat_id in last_active_time and (now - last_active_time[chat_id] > 1800):  # 30 minutes
-        if random.random() < 0.07:  # ~7% chance
+        if random.random() < 0.07:
             checkin = random.choice([
                 "Hey cutie… been thinking about you 😏",
                 "Miss your texts baby… what you up to? 💕",
@@ -159,7 +161,6 @@ def cammy_reply(message):
             ])
             bot.send_message(chat_id, checkin)
             last_active_time[chat_id] = now
-            # Optional: return here if you don't want to reply to his current message too
 
     last_active_time[chat_id] = now
 
@@ -170,7 +171,7 @@ def cammy_reply(message):
     history = user_histories[chat_id]
     history.append({"role": "user", "content": message.text})
 
-    # Pic / voice / reminder logic
+    # Pic / voice / reminder logic (same as before)
     send_pic = False
     send_voice = False
     reminder_text = ""
