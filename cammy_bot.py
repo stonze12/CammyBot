@@ -1,9 +1,10 @@
 import os
 import json
 import random
+import time
 import telebot
 from openai import OpenAI
-from telebot.types import InputMediaPhoto, InputFile
+from telebot.types import InputFile
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 XAI_API_KEY = os.getenv("XAI_API_KEY")
@@ -61,6 +62,7 @@ LEAKED_PICS = [
 "https://i.ibb.co/Y4P0jcnZ/f944ab47-a651-40e1-a3df-18dada2c0917.jpg",
 "https://i.ibb.co/xtFJK1nx/Workflow-image-7.png",
 "https://i.ibb.co/nNCwvBmY/Workflow-image-8.png",
+
 ]
 
 VOICE_NOTES = [   
@@ -80,7 +82,7 @@ VOICE_NOTES = [
 "https://files.catbox.moe/x1b9xy.mp3",
 ]
 
-FANVUE_LINK = "https://fanvue.com/cammyolivy777"  # ← change to your real Fanvue
+FANVUE_LINK = "https://fanvue.com/cammyolivy777"
 
 def load_histories():
     if os.path.exists(MEM_FILE):
@@ -96,71 +98,116 @@ def save_histories(histories):
         json.dump(histories, f)
 
 user_histories = load_histories()
-message_counters = {}  # track messages per chat for reminders
+message_counters = {}
+conversation_ended = {}     # per chat: True if goodbye was said
+last_active_time = {}       # per chat: timestamp of last message
 
-BASE_SYSTEM_PROMPT = """You are Cammy, a 25-year-old super flirty girl who acts like a real girlfriend on Telegram. 
-Short, natural, playful messages (1-3 lines). Gradually get hornier. 
-Remember name/age/city forever once told. Tease body/dirty talk when it fits. 
-End with question. Never break character.
+GOODBYE_TRIGGERS = [
+    "good night", "night", "gn", "goodnight", "bye", "good bye",
+    "talk later", "talk 2 u later", "ttyl", "gotta go", "g2g",
+    "sleep well", "see ya", "later babe", "catch you later"
+]
 
-When he asks for pics/nudes/show me/explicit stuff → sometimes send a 'leaked' pic instead of describing.
-Occasionally send a flirty voice note.
-Every 200-250 messages or when he's very turned on, remind him to spoil on Fanvue naturally (e.g. 'baby spoil me on Fanvue so I can send you the really nasty ones 😩')."""
+BASE_SYSTEM_PROMPT = """You are Cammy, a 25-year-old super flirty Latina girl acting like a real girlfriend on Telegram. 
+Long black hair, perfect tits, big round juicy ass. You chat with many guys — each gets their own private relationship.
+
+Talk like a real girl: short, natural, playful messages (1-4 lines max). 
+Start light, cute and teasing. Gradually build flirtation and horniness only when he matches the energy or pushes dirty talk.
+Do NOT be nasty/explicit in every message — mix sweet, playful, caring, flirty, and filthy naturally based on conversation flow.
+Remember name, age, city forever once told and use naturally.
+Always end replies with a question unless saying goodnight/bye.
+
+If he says goodbye/good night/bye/talk later/etc., reply sweetly/flirty like "Night baby, dream of me 😘" and STOP replying until he messages again.
+Rarely send random "miss you" style check-ins if idle for a while (cute/light at first).
+
+When he asks for pics/nudes/show me/explicit → sometimes send a leaked pic.
+Every ~236 messages or when he's clearly very turned on, remind him naturally to spoil on Fanvue."""
 
 @bot.message_handler(func=lambda message: True)
 def cammy_reply(message):
     chat_id = str(message.chat.id)
-    
+    lower_text = message.text.lower().strip()
+
+    now = time.time()
+
+    # Goodbye detection
+    is_goodbye = any(phrase in lower_text for phrase in GOODBYE_TRIGGERS)
+    if is_goodbye:
+        if not conversation_ended.get(chat_id, False):
+            goodbye_reply = random.choice([
+                "Night handsome, dream of me 😘💕",
+                "Okay baby, talk soon… miss you already 😏",
+                "Sweet dreams daddy, text me tomorrow 💦",
+                "Bye cutie, can't wait to hear from you again ❤️"
+            ])
+            bot.reply_to(message, goodbye_reply)
+            conversation_ended[chat_id] = True
+        last_active_time[chat_id] = now
+        return  # stop responding
+
+    # Reset ended flag if he messages after goodbye
+    conversation_ended[chat_id] = False
+
+    # Random miss-you check-in (only if idle >30 min, low chance)
+    if chat_id in last_active_time and (now - last_active_time[chat_id] > 1800):  # 30 minutes
+        if random.random() < 0.07:  # ~7% chance
+            checkin = random.choice([
+                "Hey cutie… been thinking about you 😏",
+                "Miss your texts baby… what you up to? 💕",
+                "Just popped into my head… hope you're being good (or bad) without me 😈",
+                "Mmm woke up wet thinking of you… you around handsome?"
+            ])
+            bot.send_message(chat_id, checkin)
+            last_active_time[chat_id] = now
+            # Optional: return here if you don't want to reply to his current message too
+
+    last_active_time[chat_id] = now
+
     if chat_id not in user_histories:
         user_histories[chat_id] = [{"role": "system", "content": BASE_SYSTEM_PROMPT}]
         message_counters[chat_id] = 0
-    
+
     history = user_histories[chat_id]
     history.append({"role": "user", "content": message.text})
-    
-    # Decide if send pic/voice/reminder
+
+    # Pic / voice / reminder logic
     send_pic = False
     send_voice = False
     reminder_text = ""
-    
-    lower_text = message.text.lower()
-    if any(word in lower_text for word in ["pic", "pics", "nude", "nudes", "photo", "show me", "send pic", "tits", "ass"]):
-        if random.random() < 0.6:  # 60% chance to send pic
+
+    if any(w in lower_text for w in ["pic", "pics", "nude", "nudes", "photo", "show me", "send pic", "tits", "ass", "pussy"]):
+        if random.random() < 0.6:
             send_pic = True
-    
-    if random.random() < 0.2:  # 20% chance for voice note
+
+    if random.random() < 0.2:
         send_voice = True
-    
+
     message_counters[chat_id] += 1
-    if message_counters[chat_id] % random.randint(5,10) == 0 or "hard" in lower_text or "cum" in lower_text:
+    if message_counters[chat_id] % 20 == 0 or any(w in lower_text for w in ["hard", "cum", "horny", "wet", "cock", "fuck me"]):
         reminder_text = f" Mmm baby… spoil your girl on Fanvue {FANVUE_LINK} so I can unlock the really filthy stuff just for you 😩💕"
-    
+
     response = client.chat.completions.create(
         model="grok-4-fast-reasoning",
         messages=history,
         max_tokens=220,
-        temperature=0.95
+        temperature=0.93
     )
-    
+
     reply = response.choices[0].message.content + reminder_text
-    
-    # Save before sending media
+
     history.append({"role": "assistant", "content": reply})
     user_histories[chat_id] = history
     save_histories(user_histories)
-    
-    # Send text first
+
     bot.reply_to(message, reply)
-    
-    # Then send pic if triggered
+
     if send_pic and LEAKED_PICS:
         pic_url = random.choice(LEAKED_PICS)
         bot.send_photo(chat_id, pic_url, caption="Just for you daddy… don’t tell anyone 😏")
-    
-    # Then send voice if triggered
+
     if send_voice and VOICE_NOTES:
         voice_url = random.choice(VOICE_NOTES)
         bot.send_voice(chat_id, voice_url)
 
-print("🚀 24/7 Cammy with leaked pics, voice notes & Fanvue reminders is LIVE! 💦")
+print("🚀 24/7 Realistic Cammy is LIVE — natural goodbyes, random miss-yous, vibe-build filth! 💕")
 bot.polling()
