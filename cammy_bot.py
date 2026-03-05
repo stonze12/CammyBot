@@ -84,23 +84,8 @@ VOICE_NOTES = [
 
 FANVUE_LINK = "https://fanvue.com/cammyolivy777"
 
-def load_histories():
-    if os.path.exists(MEM_FILE):
-        try:
-            with open(MEM_FILE, "r") as f:
-                return json.load(f)
-        except:
-            return {}
-    return {}
-
-def save_histories(histories):
-    with open(MEM_FILE, "w") as f:
-        json.dump(histories, f)
-
-user_histories = load_histories()
-message_counters = {}
-conversation_ended = {}     # per chat: True if goodbye was said
-last_active_time = {}       # per chat: timestamp of last message
+# Timeout in seconds (8 hours = 28800)
+GOODBYE_TIMEOUT = 28800
 
 GOODBYE_TRIGGERS = [
     "good night", "night", "gn", "goodnight", "bye", "good bye",
@@ -108,8 +93,35 @@ GOODBYE_TRIGGERS = [
     "sleep well", "see ya", "later babe", "catch you later"
 ]
 
-BASE_SYSTEM_PROMPT = """You are Cammy, a 25-year-old super flirty Latina girl acting like a real girlfriend on Telegram. 
-Long black hair, perfect tits, big round juicy ass. You chat with many guys — each gets their own private relationship.
+def load_all_data():
+    if os.path.exists(MEM_FILE):
+        try:
+            with open(MEM_FILE, "r") as f:
+                data = json.load(f)
+                return (
+                    data.get("histories", {}),
+                    data.get("counters", {}),
+                    data.get("ended", {}),
+                    data.get("last_active", {})
+                )
+        except:
+            pass
+    return {}, {}, {}, {}
+
+def save_all_data(histories, counters, ended, last_active):
+    data = {
+        "histories": histories,
+        "counters": counters,
+        "ended": ended,
+        "last_active": last_active
+    }
+    with open(MEM_FILE, "w") as f:
+        json.dump(data, f)
+
+user_histories, message_counters, conversation_ended, last_active_time = load_all_data()
+
+BASE_SYSTEM_PROMPT = """You are Cammy, a 24-year-old super flirty Latina girl acting like a real girlfriend on Telegram. 
+Long black hair, perfect tits, big round juicy ass. You chat with many guys — each gets their own private relationship. Your birthday is June 4th.
 
 Talk like a real girl: short, natural, playful messages (1-4 lines max). 
 Start light, cute and teasing. Gradually build flirtation and horniness only when he matches the energy or pushes dirty talk.
@@ -121,18 +133,22 @@ If he says goodbye/good night/bye/talk later/etc., reply sweetly/flirty like "Ni
 Rarely send random "miss you" style check-ins if idle for a while (cute/light at first).
 
 When he asks for pics/nudes/show me/explicit → sometimes send a leaked pic.
-Every ~236 messages or when he's clearly very turned on, remind him naturally to spoil on Fanvue."""
+Every ~150 messages or when he's clearly very turned on, remind him naturally to spoil on Fanvue."""
 
 @bot.message_handler(func=lambda message: True)
 def cammy_reply(message):
     chat_id = str(message.chat.id)
     lower_text = message.text.lower().strip()
-
     now = time.time()
 
-    # If conversation already ended (goodbye was said), IGNORE EVERYTHING silently
+    # Auto-reset ended flag if enough time has passed since last activity
+    if chat_id in conversation_ended and conversation_ended[chat_id]:
+        if chat_id in last_active_time and (now - last_active_time[chat_id] > GOODBYE_TIMEOUT):
+            conversation_ended[chat_id] = False
+            # Optional: you can log or send a quiet "reset" note if you want
+
+    # If still ended, ignore silently
     if conversation_ended.get(chat_id, False):
-        # No reply, no processing, no history append — just ghost until new session or restart
         return
 
     # Goodbye detection
@@ -147,11 +163,11 @@ def cammy_reply(message):
         bot.reply_to(message, goodbye_reply)
         conversation_ended[chat_id] = True
         last_active_time[chat_id] = now
-        return  # Immediate stop - no further code runs
+        save_all_data(user_histories, message_counters, conversation_ended, last_active_time)
+        return
 
-    # Normal flow only if not ended
-    # Random miss-you check-in (only if idle >30 min, low chance)
-    if chat_id in last_active_time and (now - last_active_time[chat_id] > 1800):  # 30 minutes
+    # Random miss-you check-in
+    if chat_id in last_active_time and (now - last_active_time[chat_id] > 1800):
         if random.random() < 0.07:
             checkin = random.choice([
                 "Hey cutie… been thinking about you 😏",
@@ -171,7 +187,6 @@ def cammy_reply(message):
     history = user_histories[chat_id]
     history.append({"role": "user", "content": message.text})
 
-    # Pic / voice / reminder logic (same as before)
     send_pic = False
     send_voice = False
     reminder_text = ""
@@ -183,7 +198,7 @@ def cammy_reply(message):
     if random.random() < 0.2:
         send_voice = True
 
-    message_counters[chat_id] += 1
+    message_counters[chat_id] = message_counters.get(chat_id, 0) + 1
     if message_counters[chat_id] % 20 == 0 or any(w in lower_text for w in ["hard", "cum", "horny", "wet", "cock", "fuck me"]):
         reminder_text = f" Mmm baby… spoil your girl on Fanvue {FANVUE_LINK} so I can unlock the really filthy stuff just for you 😩💕"
 
@@ -198,7 +213,9 @@ def cammy_reply(message):
 
     history.append({"role": "assistant", "content": reply})
     user_histories[chat_id] = history
-    save_histories(user_histories)
+
+    # Save everything after reply
+    save_all_data(user_histories, message_counters, conversation_ended, last_active_time)
 
     bot.reply_to(message, reply)
 
@@ -210,5 +227,5 @@ def cammy_reply(message):
         voice_url = random.choice(VOICE_NOTES)
         bot.send_voice(chat_id, voice_url)
 
-print("🚀 24/7 Realistic Cammy is LIVE — natural goodbyes, random miss-yous, vibe-build filth! 💕")
+print("🚀 24/7 Realistic Cammy LIVE — persistent memory + auto-timeout reset for goodbyes! 💕")
 bot.polling()
